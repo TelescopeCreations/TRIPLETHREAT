@@ -1,33 +1,21 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class BackgroundMusic : MonoBehaviour
 {
-    public AudioClip track1; // First background track
-    public AudioClip track2; // Second background track
+    [Header("Audio Sources (Assign in Inspector)")]
+    public AudioSource audioSource1; // First background track
+    public AudioSource audioSource2; // Second background track
 
-    private AudioSource audioSource1;
-    private AudioSource audioSource2;
+    [Header("Audio Clips (Assign in Inspector)")]
+    public AudioClip track1; 
+    public AudioClip track2;
 
     private bool isFading1 = false;
     private bool isFading2 = false;
 
-    void Awake()
+    void Start()
     {
-        // Prevent duplicate instances when switching scenes
-        if (FindObjectsOfType<BackgroundMusic>().Length > 1)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        //DontDestroyOnLoad(gameObject); // Keep music playing across scenes
-
-        // Create and configure AudioSources
-        audioSource1 = gameObject.AddComponent<AudioSource>();
-        audioSource2 = gameObject.AddComponent<AudioSource>();
-
         SetupAudioSource(audioSource1, track1);
         SetupAudioSource(audioSource2, track2);
 
@@ -38,37 +26,49 @@ public class BackgroundMusic : MonoBehaviour
 
     private void SetupAudioSource(AudioSource source, AudioClip clip)
     {
-        source.clip = clip;
-        source.loop = true;
-        source.playOnAwake = false;
-        source.volume = 0f; // Start silent for fade-in
+        if (source != null && clip != null)
+        {
+            source.clip = clip;
+            source.loop = true;
+            source.playOnAwake = false;
+            source.volume = 0f; // Start silent for fade-in
+        }
+        else
+        {
+            Debug.LogWarning("Missing AudioSource or AudioClip assignment.");
+        }
     }
 
     public void PlayTrack(AudioSource source, bool fadeIn = false)
     {
-        if (source.clip == null) return;
-
-        source.Play();
-        if (fadeIn)
+        if (source != null && source.clip != null)
         {
-            StartCoroutine(FadeIn(source));
+            source.Play();
+            if (fadeIn)
+            {
+                StartCoroutine(FadeIn(source));
+            }
         }
     }
 
     public void AdjustTrack1Volume(float volume)
     {
-        StartCoroutine(FadeToVolume(audioSource1, volume));
+        if (audioSource1 != null)
+            StartCoroutine(FadeToVolume(audioSource1, volume));
     }
 
     public void AdjustTrack2Volume(float volume)
     {
-        StartCoroutine(FadeToVolume(audioSource2, volume));
+        if (audioSource2 != null)
+            StartCoroutine(FadeToVolume(audioSource2, volume));
     }
 
     private IEnumerator FadeIn(AudioSource source, float duration = 1.5f)
     {
+        if (source == null) yield break;
+
         float startVolume = 0f;
-        float targetVolume = 0.5f; // Adjust as needed
+        float targetVolume = source.volume > 0 ? source.volume : 0.5f;
 
         for (float t = 0; t < duration; t += Time.deltaTime)
         {
@@ -81,8 +81,10 @@ public class BackgroundMusic : MonoBehaviour
 
     private IEnumerator FadeToVolume(AudioSource source, float targetVolume, float duration = 1.5f)
     {
-        if ((source == audioSource1 && isFading1) || (source == audioSource2 && isFading2))
-            yield break; // Prevent multiple fades
+        if (source == null) yield break;
+
+        bool isFading = source == audioSource1 ? isFading1 : isFading2;
+        if (isFading) yield break; // Prevent overlapping fades
 
         if (source == audioSource1) isFading1 = true;
         if (source == audioSource2) isFading2 = true;
