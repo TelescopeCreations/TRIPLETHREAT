@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5097024100926580072}
   m_Layer: 0
   m_Name: Gold Pin
-  m_TagString: Untagged
+  m_TagString: Collectible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,8 +29,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -9.75, y: 0.29441333, z: 3.62}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5915444479838363049}
   m_Father: {fileID: 0}
@@ -73,6 +73,7 @@ MonoBehaviour:
   collectibleType: 0
   collectionSound: {fileID: 8300000, guid: 5ed2a830f9d7e4333960025254196808, type: 3}
   audioSource: {fileID: 5097024100926580072}
+  gameManager: {fileID: 0}
 --- !u!82 &5097024100926580072
 AudioSource:
   m_ObjectHideFlags: 0

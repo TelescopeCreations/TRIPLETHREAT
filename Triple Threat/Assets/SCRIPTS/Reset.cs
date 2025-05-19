@@ -24,7 +24,6 @@ public class Reset : MonoBehaviour
     private void Respawn()
     {
         // Reset the player's position to the respawn point
-        transform.position = respawnPoint.position;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.Sleep();

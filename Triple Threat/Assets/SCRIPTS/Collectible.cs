@@ -11,9 +11,11 @@ public class Collectible : MonoBehaviour
     public AudioClip collectionSound; // Assign in the Inspector
     public AudioSource audioSource;
     private Collider collectibleCollider;
-    
+
+    public GameManager gameManager; // Reference to GameManager script
+
     private int points; // Points for each collectible
-    
+
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -21,8 +23,8 @@ public class Collectible : MonoBehaviour
         {
             Debug.LogWarning("No AudioSource found on " + gameObject.name + ". Please add one in the Inspector.");
         }
-        
-         // Get the Collider component
+
+        // Get the Collider component
         collectibleCollider = GetComponent<Collider>();
         if (collectibleCollider == null)
         {
@@ -39,22 +41,23 @@ public class Collectible : MonoBehaviour
     }
 
     private void Collect()
-    {   
-        
+    {
+        GameManager.instance.CollectItem();
+        // Disable the GameObject to prevent multiple collections
         // Disable collider to prevent multiple triggers
         if (collectibleCollider != null)
         {
             collectibleCollider.enabled = false;
-        }   
-
-
-         // Play collection sound
-         if (audioSource != null && collectionSound != null)
-        {
-             audioSource.PlayOneShot(collectionSound);
         }
 
-      
+
+        // Play collection sound
+        if (audioSource != null && collectionSound != null)
+        {
+            audioSource.PlayOneShot(collectionSound);
+        }
+
+
         // Handle collection logic based on type
         switch (collectibleType)
         {
@@ -74,13 +77,13 @@ public class Collectible : MonoBehaviour
         }
         GameManager.instance.AddScore(points);
 
-          // Add points to player's score
-    
+        // Add points to player's score
+
         Debug.Log($"Collected {collectibleType}! +{points} points");
 
-        
 
-        Destroy(gameObject, 4.0f); // Small delay so sound can play
+
+        Destroy(gameObject, 2.0f); // Small delay so sound can play
     }
 }
 
